@@ -30,12 +30,13 @@ class Article(models.Model):
 class Scope(models.Model):
 
     article = models.ForeignKey(Article, default=None, on_delete=models.CASCADE, related_name='scopes')
-    tag = models.ForeignKey(Tag, default=None, on_delete=models.CASCADE, related_name='scopes')
-    is_main = models.BooleanField(default=None)
+    tag = models.ForeignKey(Tag, default=None, on_delete=models.CASCADE, related_name='scopes', verbose_name='Раздел')
+    is_main = models.BooleanField(default=False, verbose_name='Основной') # поставил по умолчанию False вместо None
 
     class Meta:
         verbose_name = 'Тематика статьи'
         verbose_name_plural = 'Тематики статей'
+        ordering = ['-is_main', 'tag__name']
 
     def __str__(self):
         return self.article.title

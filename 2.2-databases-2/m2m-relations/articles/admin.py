@@ -6,14 +6,11 @@ from django.forms import BaseInlineFormSet
 
 class ScopeInlineFormset(BaseInlineFormSet):
     def clean(self):
+        unique_tags = []
         for form in self.forms:
-            # В form.cleaned_data будет словарь с данными
-            # каждой отдельной формы, которые вы можете проверить
-            form.cleaned_data
-            # вызовом исключения ValidationError можно указать админке о наличие ошибки
-            # таким образом объект не будет сохранен,
-            # а пользователю выведется соответствующее сообщение об ошибке
-            raise ValidationError('Это ошибка!')
+            unique_tags.append(form.cleaned_data.get('is_main'))
+        if unique_tags.count(True) != 1:
+            raise ValidationError('Пожалуйста, выберите один основной раздел!')
         return super().clean()  # вызываем базовый код переопределяемого метода
 
 class ScopeInline(admin.TabularInline):
