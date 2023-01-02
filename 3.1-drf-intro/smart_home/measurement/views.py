@@ -50,7 +50,7 @@ class SensorRetrieveUpdate(RetrieveUpdateAPIView):
 class MeasurementCreate(APIView):
     def post(self, request):
         post_new = Measurement.objects.create(
-            sensor=Sensor.objects.get(id=request.data['id']),
+            sensor=Sensor.objects.get(id=request.data['sensor_id']),
             temperature=request.data['temperature']
         )
         return Response({'post': model_to_dict(post_new)})
