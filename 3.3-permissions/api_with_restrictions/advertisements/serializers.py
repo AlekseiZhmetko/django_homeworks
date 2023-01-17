@@ -54,3 +54,5 @@ class AdvertisementSerializer(serializers.ModelSerializer):
                 return data
         else:
             return data
+
+

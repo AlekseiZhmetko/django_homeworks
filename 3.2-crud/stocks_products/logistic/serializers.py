@@ -24,35 +24,35 @@ class ProductPositionSerializer(serializers.ModelSerializer):
 
 
 class StockSerializer(serializers.ModelSerializer):
-    positions = ProductPositionSerializer(many=True, read_only=True)
+    positions = ProductPositionSerializer(many=True, read_only=False)
 
     class Meta:
         model = Stock
         fields = ['address', 'positions']
 
-    # def create(self, validated_data):
-    #     # достаем связанные данные для других таблиц
-    #     positions = validated_data.pop('positions')
-    #
-    #     # создаем склад по его параметрам
-    #     stock = super().create(validated_data)
-    #     for position in positions:
-    #         position['stock'] = stock
-    #         StockProduct.objects.create(**position)
-    #     return stock
-
-
-    def update_or_create(self, instance, validated_data):
-
+    def create(self, validated_data):
+        # достаем связанные данные для других таблиц
         positions = validated_data.pop('positions')
 
-        stock = super().update_or_create(self, instance)
+        # создаем склад по его параметрам
+        stock = super().create(validated_data)
         for position in positions:
+            position['stock'] = stock
+            StockProduct.objects.create(**position)
+        return stock
+
+
+    def update(self, instance, validated_data):
+
+        positions = validated_data.pop('positions')
+        stock = instance
+        for position in positions:
+            print(position)
             product = position['product']
             price = position['price']
             quantity = position['quantity']
             StockProduct.objects.update_or_create(
-                stock=instance,
+                stock=stock,
                 product=product,
                 defaults={'price': price, 'quantity': quantity}
             )
